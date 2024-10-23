@@ -1,22 +1,33 @@
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
-const navItems = [
+const navItemsUser = [
   { name: "Complain", path: "/complain" },
   { name: "Profile", path: "/profile" },
   { name: "Logout", path: "/login" },
 ];
 
-export default function Navbar() {
+const navItemsAdmin = [
+  { name: "Complain", path: "/complain" },
+  { name: "Category", path: "/category" },
+  { name: "Product", path: "/product" },
+  { name: "Logout", path: "/login" },
+];
+
+export default function Navbar({ role }: { role: "user" | "admin" }) {
+  const navItems = role === "admin" ? navItemsAdmin : navItemsUser;
+
   return (
-    <AppBar position="static" sx={{ bgcolor: "inherit",padding:'20px' }}>
+    <AppBar position="fixed" sx={{ bgcolor: "black", padding: '20px' }}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          <img
-            src="assets/logo-dumbmerch.png"
-            alt="Logo"
-            style={{ width: "70px" }}
-          />
+          <Link to="/">
+            <img
+              src="assets/logo-dumbmerch.png"
+              alt="Logo"
+              style={{ width: "70px" }}
+            />
+          </Link>
         </Typography>
         <Box>
           {navItems.map((item) => (
@@ -29,9 +40,9 @@ export default function Navbar() {
                 textDecoration: "none",
                 "&.active": {
                   fontWeight: "bold",
-                  color: "secondary",
+                  color: "secondary.main",
                 },
-                marginTop : "-30px",
+                marginTop: "-30px",
                 marginRight: "16px",
               }}
             >

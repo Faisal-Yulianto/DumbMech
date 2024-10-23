@@ -6,8 +6,8 @@ import theme from "../theme/theme";
 export default function Home() {
   return (
     <Box>
-      <Navbar />
-      <Box>
+      <Navbar role={"user"} />
+      <Box sx={{mt:15}}>
         <Typography
           sx={{
             color: theme.palette.secondary.main,
@@ -20,6 +20,7 @@ export default function Home() {
         >
           Product
         </Typography>
+       
         <Stack direction={'row'} sx={{ml:10}}>
           <ActionAreaCard />
           <ActionAreaCard/>

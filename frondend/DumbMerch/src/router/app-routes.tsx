@@ -7,6 +7,10 @@ import Register from "../components/auth/Register";
 import Login from "../components/auth/login";
 import Home from "../pages/home";
 import Detail from "../pages/detail";
+import Profile from "../pages/profile";
+import Complain from "../pages/complain";
+import Category from "../pages/category";
+import Product from "../pages/product";
 
 const routes: RouteObject[] = [
     {
@@ -25,6 +29,22 @@ const routes: RouteObject[] = [
         path: "detail", 
         element: <Detail/>, 
     },
+    {
+        path: "profile", 
+        element: <Profile/>, 
+    },
+    {
+        path: "complain", 
+        element: <Complain/>, 
+    },
+    {
+        path: "category", 
+        element: <Category/>, 
+    },
+    {
+        path: "product", 
+        element: <Product/>, 
+    }
 ];
 
 export default function Router() {

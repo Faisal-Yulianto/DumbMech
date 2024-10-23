@@ -8,8 +8,8 @@ import Navbar from "./navbar";
 export default function Detail() {
   return (
     <Box>
-      <Navbar />
-      <Stack direction={'row'} alignItems={'center'} justifyContent={'center'}>
+      <Navbar role={"user"} />
+      <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} sx={{mt:15}}>
         <Card
           sx={{ Width: '600px' , m: "50px", Height: 410, borderRadius: "10px" }}
         >

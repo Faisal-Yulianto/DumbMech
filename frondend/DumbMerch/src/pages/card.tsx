@@ -4,9 +4,11 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import theme from '../theme/theme';
+import { Link } from 'react-router-dom';
 
 export default function ActionAreaCard() {
   return (
+    <Link to= "/detail">
     <Card sx={{ maxWidth: 241,ml:'20px', Height:410,borderRadius:'10px' }}>
       <CardActionArea>
         <CardMedia
@@ -28,5 +30,6 @@ export default function ActionAreaCard() {
         </CardContent>
       </CardActionArea>
     </Card>
+    </Link>
   );
 }

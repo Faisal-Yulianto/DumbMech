@@ -13,6 +13,9 @@ const dumbmerchTheme = createTheme ({
     },
     background : {
         default : 'black'
+    },
+    error : {
+        main : '#4caf50'
     }
    }, 
    typography: {
