@@ -6,8 +6,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import Navbar from "./navbar";
-import { Box, Button } from "@mui/material";
+import Navbar from "../layout/navbar";
+import { Box, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import DraggableDialog from "../layout/delete-confirm"; // Import dialog
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -45,10 +48,36 @@ const rows = [
 ];
 
 export default function Product() {
+  const navigate = useNavigate();
+  const [dialogOpen, setDialogOpen] = useState(false); // State to control dialog visibility
+  const [selectedRow, setSelectedRow] = useState<number | null>(null); // State to track selected row
+
+  const handleEdit = (id: number) => {
+    navigate(`/product/edit/${id}`);
+  };
+
+  const handleOpenDialog = (id: number) => {
+    setSelectedRow(id); // Set the selected row when opening dialog
+    setDialogOpen(true); // Open the dialog
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false); // Close the dialog
+  };
+
+  const handleConfirmAction = () => {
+    if (selectedRow !== null) {
+      console.log(`Delete action confirmed for product ID: ${selectedRow}`);
+      // Di sini Anda bisa menjalankan logika penghapusan produk
+    }
+    setDialogOpen(false); // Close the dialog after confirmation
+  };
+
   return (
     <Box>
       <Navbar role={"admin"} />
       <Box sx={{ width: "90%", height: "max-content", pt: 15, margin: "auto" }}>
+        <Typography variant="h5" sx={{ color: 'primary.main', pb: 3, fontWeight: 'bold' }}>List Product</Typography>
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
@@ -69,7 +98,7 @@ export default function Product() {
                     {row.No}
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    <img src={row.photo} alt={row.product_name} style={{ width: 50, height: 50 }} /> {/* Menampilkan foto produk */}
+                    <img src={row.photo} alt={row.product_name} style={{ width: 50, height: 50 }} />
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.product_name}
@@ -87,14 +116,16 @@ export default function Product() {
                     <Button
                       variant="contained"
                       color="error"
-                      sx={{ color: "primary.main", fontWeight: "bold",width:100 }}
+                      sx={{ color: "primary.main", fontWeight: "bold", width: 100 }}
+                      onClick={() => handleEdit(row.No)}
                     >
                       Edit
                     </Button>
                     <Button
                       variant="contained"
                       color="secondary"
-                      sx={{ ml: 1, color: "primary.main", fontWeight: "bold",width:100 }}
+                      onClick={() => handleOpenDialog(row.No)}
+                      sx={{ ml: 1, color: "primary.main", fontWeight: "bold", width: 100 }}
                     >
                       Delete
                     </Button>
@@ -104,6 +135,12 @@ export default function Product() {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* Passing necessary props to DraggableDialog */}
+        <DraggableDialog
+          open={dialogOpen}
+          handleClose={handleCloseDialog}
+          handleConfirm={handleConfirmAction}
+        />
       </Box>
     </Box>
   );

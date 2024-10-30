@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
 import theme from "../theme/theme";
-import Navbar from "./navbar";
+import Navbar from "../layout/navbar";
 
 export default function Detail() {
   return (

@@ -1,4 +1,4 @@
-import Navbar from "./navbar";
+import Navbar from "../layout/navbar";
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import {
   Box,
@@ -22,6 +22,7 @@ export default function Complain() {
             color: "primary.main",
             pl: 7,
             pt: 4,
+            
           }}
         >
           {/* Daftar User */}
@@ -62,6 +63,7 @@ export default function Complain() {
             flexDirection: "column",
             justifyContent: "space-between",
             p: 2,
+            overflowY:''
           }}
         >
           <Box

@@ -11,6 +11,8 @@ import Profile from "../pages/profile";
 import Complain from "../pages/complain";
 import Category from "../pages/category";
 import Product from "../pages/product";
+import EditCategory from "../layout/editCategory";
+import EditProduct from "../layout/edit-product";
 
 const routes: RouteObject[] = [
     {
@@ -44,6 +46,14 @@ const routes: RouteObject[] = [
     {
         path: "product", 
         element: <Product/>, 
+    },
+    {
+        path: "category/edit/:id", 
+        element: <EditCategory/>, 
+    },
+    {
+        path: "product/edit/:id", 
+        element: <EditProduct/>, 
     }
 ];
 

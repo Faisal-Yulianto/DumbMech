@@ -3,15 +3,16 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
-import Navbar from "./navbar";
+import Navbar from "../layout/navbar";
 import { Box, Stack } from "@mui/material";
-import TransactionCard from "./transaction";
+import TransactionCard from "../layout/transaction";
+import TransitionsModal from "../layout/editProfile";
 
 export default function Profile() {
   return (
     <Box>
       <Navbar role={"user"} />
-      <Stack direction={"row"} justifyContent={"center"} sx={{mt:15}}>
+      <Stack direction={"row"} justifyContent={"center"} sx={{ mt: 15 }}>
         <Box pl={10} sx={{ width: "50%" }}>
           <Typography
             sx={{
@@ -23,41 +24,60 @@ export default function Profile() {
           >
             My Profile
           </Typography>
-          <Card sx={{ m: 5 }}>
-            <CardActionArea>
-              <Stack direction={"row"}>
-                <CardMedia
-                  component="img"
-                  height="435"
-                  width="338"
-                  image="assets/produk.png "
-                />
-                <CardContent sx={{ bgcolor: "black", color: "white" }}>
-                  <Typography sx={{ color: "secondary.main" }} variant="h6">
-                    Name
-                  </Typography>
-                  <Typography sx={{ mb: 3 }}>yosep</Typography>
-                  <Typography sx={{ color: "secondary.main" }} variant="h6">
-                    Email
-                  </Typography>
-                  <Typography sx={{ mb: 3 }}>yosep@gmail.com</Typography>
-                  <Typography sx={{ color: "secondary.main" }} variant="h6">
-                    Gender
-                  </Typography>
-                  <Typography sx={{ mb: 3 }}>Male</Typography>
-                  <Typography sx={{ color: "secondary.main" }} variant="h6">
-                    Address
-                  </Typography>
-                  <Typography>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Autem, voluptatum. Ex, quasi? Molestias temporibus
-                    provident, soluta obcaecati maiores fuga eveniet nulla
-                    impedit
-                  </Typography>
-                </CardContent>
-              </Stack>
+          <Card
+            sx={{
+              m: 5,
+              display: "flex",
+              flexDirection: "row",
+              height: "460px",
+              width: "600px",
+            }}
+          >
+            <CardActionArea
+              sx={{ display: "flex", flexDirection: "row", flexGrow: 1 }}
+            >
+              <CardMedia
+                component="img"
+                height="100%"
+                width="300px" 
+                image="assets/produk.png"
+                sx={{ objectFit: "cover" }} 
+              />
+              <CardContent
+                sx={{
+                  bgcolor: "black",
+                  color: "white",
+                  height:'100%',
+                  width:'600px',
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography sx={{ color: "secondary.main" }} variant="h6">
+                  Name
+                </Typography>
+                <Typography sx={{ mb: 1 }}></Typography>
+                <Typography sx={{ color: "secondary.main" }} variant="h6">
+                  Email
+                </Typography>
+                <Typography sx={{ mb: 1 }}></Typography>
+                <Typography sx={{ color: "secondary.main" }} variant="h6">
+                  Phone
+                </Typography>
+                <Typography sx={{ mb: 1 }}></Typography>
+                <Typography sx={{ color: "secondary.main" }} variant="h6">
+                  Gender
+                </Typography>
+                <Typography sx={{ mb: 2 }}></Typography>
+                <Typography sx={{ color: "secondary.main" }} variant="h6">
+                  Address
+                </Typography>
+                <Typography></Typography>
+              </CardContent>
             </CardActionArea>
           </Card>
+          <TransitionsModal/>
         </Box>
         <Box sx={{ width: "40%" }}>
           <Typography
@@ -79,7 +99,7 @@ export default function Profile() {
             productImage="assets/produk.png"
             logoImage="assets/logo-dumbmerch.png"
           />
-            <TransactionCard
+          <TransactionCard
             productName="Mouse"
             date="Saturday, 14 July 2024"
             price="600.000"

@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
-import Navbar from "./navbar";
-import ActionAreaCard from "./card";
+import Navbar from "../layout/navbar";
+import ActionAreaCard from "../layout/card";
 import theme from "../theme/theme";
 
 export default function Home() {

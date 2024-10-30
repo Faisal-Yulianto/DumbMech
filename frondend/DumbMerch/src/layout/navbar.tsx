@@ -23,7 +23,7 @@ export default function Navbar({ role }: { role: "user" | "admin" }) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link to="/">
             <img
-              src="assets/logo-dumbmerch.png"
+              src="/assets/logo-dumbmerch.png"
               alt="Logo"
               style={{ width: "70px" }}
             />
