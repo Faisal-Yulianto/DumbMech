@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { register, login } from "../services/authServices";
+import { register, login, getUserById} from "../services/authServices";
 import { RegiterDto, loginDto } from "../dto/auth-dto";
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
@@ -21,3 +21,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({ error: (error as Error).message || "Login failed. Please check your credentials." });
     }
 }
+
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = parseInt(req.params.userId);
+        const user = await getUserById(userId); 
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(404).json({ error: (error as Error).message || "User not found" });
+    }
+};

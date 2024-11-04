@@ -15,7 +15,7 @@ export const register = async (data: RegiterDto) => {
     }
   });
 
-  return genereateToken(user.id, user.role); 
+  return genereateToken(user.id, user.role,user.email); 
 };
 
 export const login = async (data: loginDto) => {
@@ -29,5 +29,19 @@ export const login = async (data: loginDto) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new Error("Invalid password");
 
-  return genereateToken(user.id, user.role);
+  return genereateToken(user.id, user.role,user.email);
 };
+
+export const getUserById = async (userId: number) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    return user;
+}
+
+

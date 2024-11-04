@@ -17,6 +17,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   profile Profile?
+
+  Product Product[]
 }
 
 model Profile {
@@ -32,6 +34,29 @@ model Profile {
   userId Int  @unique
 }
 
+model Product {
+  id          Int      @id @default(autoincrement())
+  image       String
+  productName String
+  productDesc String
+  price       Float
+  qty         Int
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("tb_product")
+}
+
+model Category {
+  id           Int    @id @default(autoincrement())
+  categoryName String
+
+  product Product[]
+
+  @@map("tb_category")
+}
 
 enum Role {
   USER
