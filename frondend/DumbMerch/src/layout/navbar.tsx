@@ -2,12 +2,14 @@ import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
 
 const navItemsUser = [
+  { name: "Home", path: "/" },
   { name: "Complain", path: "/complain" },
   { name: "Profile", path: "/profile" },
   { name: "Logout", path: "/login" },
 ];
 
 const navItemsAdmin = [
+  { name: "dahsboard", path: "/dashboard" },
   { name: "Complain", path: "/complain" },
   { name: "Category", path: "/category" },
   { name: "Product", path: "/product" },

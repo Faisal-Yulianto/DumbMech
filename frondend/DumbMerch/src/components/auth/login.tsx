@@ -21,6 +21,7 @@ export default function Login() {
       const response = await axios.post(`${baseUrl}/api/auth/login`, data);
       localStorage.setItem("token", response.data.token); 
       navigate("/"); 
+      window.location.reload();
     } catch (error: any) {
       setErrorMessage("Login failed. Please check your credentials.");
       console.error(error);

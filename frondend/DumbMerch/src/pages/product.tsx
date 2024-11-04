@@ -7,10 +7,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Navbar from "../layout/navbar";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import DraggableDialog from "../layout/delete-confirm"; // Import dialog
+import DraggableDialog from "../layout/delete-confirm"; 
+import TransitionModal from "../layout/addProduct";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -61,23 +62,30 @@ export default function Product() {
     setDialogOpen(true); // Open the dialog
   };
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false); // Close the dialog
+/*************  ✨ Codeium Command ⭐  *************/
+  /**
+   * Close the dialog and reset the selected row to null
+   */
+
+/******  f6f2f600-543d-44d9-ba94-1641ccc3f266  *******/  const handleCloseDialog = () => {
+    setDialogOpen(false); 
   };
 
   const handleConfirmAction = () => {
     if (selectedRow !== null) {
       console.log(`Delete action confirmed for product ID: ${selectedRow}`);
-      // Di sini Anda bisa menjalankan logika penghapusan produk
     }
-    setDialogOpen(false); // Close the dialog after confirmation
-  };
+    setDialogOpen(false); 
+  }
 
   return (
     <Box>
       <Navbar role={"admin"} />
-      <Box sx={{ width: "90%", height: "max-content", pt: 15, margin: "auto" }}>
+      <Box sx={{ width: "90%", height: "max-content", pt: 20, margin: "auto" }}>
+        <Stack direction="row" justifyContent={'space-between'}>
         <Typography variant="h5" sx={{ color: 'primary.main', pb: 3, fontWeight: 'bold' }}>List Product</Typography>
+        <TransitionModal/>
+        </Stack>
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
@@ -135,7 +143,6 @@ export default function Product() {
             </TableBody>
           </Table>
         </TableContainer>
-        {/* Passing necessary props to DraggableDialog */}
         <DraggableDialog
           open={dialogOpen}
           handleClose={handleCloseDialog}

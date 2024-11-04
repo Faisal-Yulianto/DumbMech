@@ -1,35 +1,42 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode"; 
 import { RootState } from "../../src/store/store";
-import {jwtDecode} from "jwt-decode";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
+interface Profile {
+  phone: string;
+  gender: string;
+  address: string;
+  image: string | null;
+  user: {
+    username: string;
+    email: string;
+  };
 }
 
-interface UserState {
-  user: User | null;
+interface ProfileState {
+  email: any;
+  data: Profile | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
-const initialState: UserState = {
-  user: null,
+const initialState: ProfileState = {
+  data: null,
   status: "idle",
   error: null,
+  email: undefined
 };
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 interface TokenPayload {
   userId: number;
   exp: number;
 }
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-export const fetchUserById = createAsyncThunk(
-  "user/fetchUserById",
+export const fetchProfile = createAsyncThunk(
+  "profile/fetchProfile",
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
@@ -39,7 +46,7 @@ export const fetchUserById = createAsyncThunk(
       const decoded = jwtDecode<TokenPayload>(token);
       const { userId } = decoded;
 
-      const response = await axios.get<User>(`${baseUrl}/api/auth/user/${userId}`, {
+      const response = await axios.get<Profile>(`${baseUrl}/api/profile/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -54,35 +61,27 @@ export const fetchUserById = createAsyncThunk(
   }
 );
 
-const userSlice = createSlice({
-  name: "user",
+const profileSlice = createSlice({
+  name: "profile",
   initialState,
-  reducers: {
-    clearUser(state) {
-      state.user = null;
-      state.status = "idle";
-      state.error = null;
-    },
-  },
+  reducers: {UpdateProfile(state, action: PayloadAction<Profile>) {
+    state.data = { ...state.data, ...action.payload };
+  },},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUserById.pending, (state) => {
+      .addCase(fetchProfile.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchUserById.fulfilled, (state, action: PayloadAction<User>) => {
+      .addCase(fetchProfile.fulfilled, (state, action: PayloadAction<Profile>) => {
         state.status = "succeeded";
-        state.user = action.payload;
+        state.data = action.payload;
       })
-      .addCase(fetchUserById.rejected, (state, action) => {
+      .addCase(fetchProfile.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });
   },
 });
-
-export const { clearUser } = userSlice.actions;
-export default userSlice.reducer;
-
-export const selectUser = (state: RootState) => state.user.user;
-export const selectUserStatus = (state: RootState) => state.user.status;
-export const selectUserError = (state: RootState) => state.user.error;
+export const { UpdateProfile } = profileSlice.actions;
+export default profileSlice.reducer;
+export const selectProfile = (state: RootState) => state.profiles; 

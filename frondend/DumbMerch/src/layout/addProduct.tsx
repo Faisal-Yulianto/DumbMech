@@ -4,18 +4,14 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import useEditProfile from "../hooks/useEditProfile";
+import useAddProduct from "../hooks/useEditProfile";
 import { CircularProgress, Backdrop } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   styled,
   TextField,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 
 const style = {
   borderRadius: "20px",
@@ -35,7 +31,7 @@ const VisuallyHiddenInput = styled("input")({
   display: "none",
 });
 
-export default function EditProfileModal() {
+export default function addProductModal() {
   const [open, setOpen] = React.useState(false);
   const {
     register,
@@ -43,12 +39,11 @@ export default function EditProfileModal() {
     onSubmit,
     errors,
     fileNames,
-    emailFromRedux,
     errorMessage,
     handleFileChange,
     setErrorMessage,
     isLoading,
-  } = useEditProfile();
+  } = useAddProduct();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -63,13 +58,13 @@ export default function EditProfileModal() {
         sx={{
           bgcolor: "secondary.main",
           ml: 5,
-          width: "43%",
+          width: "200px",
           p: 2,
           mt: "-20px",
         }}
       >
-        Edit Profile
-        <EditIcon sx={{ ml: 2 }} />
+        <AddIcon />
+        Add Product
       </Button>
       <Modal
         aria-labelledby="transition-modal-title"
@@ -92,7 +87,7 @@ export default function EditProfileModal() {
               component="h2"
               sx={{ fontWeight: "bold", color: "primary.main" }}
             >
-              Edit Profile
+              Add Product
             </Typography>
             <Backdrop open={isLoading} style={{ zIndex: 1301 }}>
               <CircularProgress color="secondary" size={60} />{" "}
@@ -138,9 +133,9 @@ export default function EditProfileModal() {
                   )}
                 </Stack>
                 <TextField
-                  label="Name"
+                  label="Product Name"
                   variant="outlined"
-                  {...register("username")}
+                  {...register("ProductName")}
                   InputProps={{
                     style: { color: "black" },
                   }}
@@ -155,13 +150,13 @@ export default function EditProfileModal() {
                 )}
 
                 <TextField
-                  label="Email"
+                  multiline
+                  rows={4}
+                  label="Description"
                   variant="outlined"
-                  value={emailFromRedux}
-                  {...register("email")}
+                  {...register("description")}
                   InputProps={{
                     style: { color: "black" },
-                    readOnly: true,
                   }}
                   sx={{
                     borderRadius: 1,
@@ -174,9 +169,9 @@ export default function EditProfileModal() {
                 )}
 
                 <TextField
-                  label="Phone"
+                  label="Price"
                   variant="outlined"
-                  {...register("phone")}
+                  {...register("price")}
                   InputProps={{
                     style: { color: "black" },
                   }}
@@ -190,31 +185,10 @@ export default function EditProfileModal() {
                   </Typography>
                 )}
 
-                <FormControl fullWidth sx={{ mt: 3 }}>
-                  <InputLabel id="gender-select-label">Gender</InputLabel>
-                  <Select
-                    labelId="gender-select-label"
-                    id="gender-select"
-                    {...register("gender")}
-                    sx={{
-                      color: "black",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <MenuItem value="Male">Male</MenuItem>
-                    <MenuItem value="Female">Female</MenuItem>
-                  </Select>
-                  {errors.gender && (
-                    <Typography color="error">
-                      {errors.gender.message as string}
-                    </Typography>
-                  )}
-                </FormControl>
-
                 <TextField
-                  label="Address"
+                  label="qty"
                   variant="outlined"
-                  {...register("address")}
+                  {...register("qty")}
                   InputProps={{
                     style: { color: "black" },
                   }}
@@ -222,9 +196,9 @@ export default function EditProfileModal() {
                     borderRadius: 1,
                   }}
                 />
-                {errors.address && (
+                {errors.phone && (
                   <Typography color="error">
-                    {errors.address.message as string}
+                    {errors.phone.message as string}
                   </Typography>
                 )}
 
@@ -237,7 +211,7 @@ export default function EditProfileModal() {
                     mt: 3,
                   }}
                 >
-                   {isLoading ? "Loading..." : "Update"}
+                  {isLoading ? "Loading..." : "Add"}
                 </Button>
               </Box>
             </Typography>

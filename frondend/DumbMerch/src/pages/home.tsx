@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <Box>
       <Navbar role={"user"} />
-      <Box sx={{mt:15}}>
+      <Box sx={{ mt: 15 }}>
         <Typography
           sx={{
             color: theme.palette.secondary.main,
@@ -15,15 +15,13 @@ export default function Home() {
             fontWeight: "bold",
             ml: "90px",
             mt: "50px",
-            mb: "20px"
+            mb: "20px",
           }}
         >
           Product
         </Typography>
-       
-        <Stack direction={'row'} sx={{ml:10}}>
+        <Stack direction={"row"} sx={{ ml: 10 }}>
           <ActionAreaCard />
-          <ActionAreaCard/>
         </Stack>
       </Box>
     </Box>
