@@ -1,9 +1,52 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import Navbar from "./navbar";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories, updateCategory } from "../store/categorySlice"; 
+import { AppDispatch, RootState } from "../store/store"; 
+
+interface Category {
+  id: number;
+  categoryName: string;
+}
 
 export default function EditCategory() {
-  useParams();
+  const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate(); 
+  const categories = useSelector((state: RootState) => state.Category.categories); 
+  const [categoryName, setCategoryName] = useState<string>(""); 
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (id) {
+      const category = categories.find((cat: Category) => cat.id === parseInt(id));
+      if (category) {                                           
+        setCategoryName(category.categoryName); 
+      }
+    }
+  }, [categories, id]);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCategoryName(event.target.value);
+  };
+
+  const handleSave = () => {
+    if (categoryName) {
+      dispatch(updateCategory({ id: parseInt(id!), categoryData: { categoryName } })) 
+        .unwrap()
+        .then(() => {
+          navigate("/category"); 
+        })
+        .catch((error) => {
+          console.error("Failed to update category: ", error);
+        });
+    }
+  };
+
   return (
     <Box>
       <Navbar role={"admin"} />
@@ -30,6 +73,8 @@ export default function EditCategory() {
           label="Category"
           multiline
           variant="outlined"
+          value={categoryName}
+          onChange={handleChange} 
           InputProps={{
             style: { color: "white" },
           }}
@@ -47,6 +92,7 @@ export default function EditCategory() {
             color: "primary.main",
             height: 50,
           }}
+          onClick={handleSave}
         >
           Save
         </Button>

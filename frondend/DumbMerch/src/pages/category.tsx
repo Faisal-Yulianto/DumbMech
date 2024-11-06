@@ -9,8 +9,13 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Navbar from "../layout/navbar";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, Typography } from "@mui/material";
-import DraggableDialog from "../layout/delete-confirm"; // Import dialog
+import { Box, Button, Stack, Typography } from "@mui/material";
+import DraggableDialog from "../layout/delete-confirm";
+import TransitionModal from "../layout/addCategory";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../store/store";
+import { fetchCategories, deleteCategory } from "../store/categorySlice";
+import { useEffect } from "react";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,29 +42,22 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(No: number, Category_Name: string) {
-  return { No, Category_Name };
-}
-
-const rows = [
-  createData(1, "mouse"),
-  createData(2, "keyboard"),
-  createData(3, "headphone"),
-];
-
 export default function Category() {
   const navigate = useNavigate();
-  
-  // State untuk membuka dialog
+  const dispatch = useDispatch<AppDispatch>();
+
+  const categories = useSelector((state: RootState) => state.Category.categories);
   const [dialogOpen, setDialogOpen] = React.useState(false);
-  
-  const [selectedRow, setSelectedRow] = React.useState<number | null>(null); // Row yang dipilih
+  const [selectedRow, setSelectedRow] = React.useState<number | null>(null);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleEdit = (id: number) => {
     navigate(`/category/edit/${id}`);
   };
 
-  // Buka dialog dengan row yang dipilih
   const handleOpenDialog = (id: number) => {
     setSelectedRow(id);
     setDialogOpen(true);
@@ -70,28 +68,36 @@ export default function Category() {
   };
 
   const handleConfirmAction = () => {
-    // Lakukan action delete di sini
-    console.log(`Delete action confirmed for category ID: ${selectedRow}`);
+    if (selectedRow !== null) {
+      dispatch(deleteCategory(selectedRow))
+        .unwrap()
+        .then(() => {
+        })
+        .catch((error) => {
+          console.error("Failed to delete category:", error);
+        });
+    }
     setDialogOpen(false);
   };
 
   return (
     <Box>
       <Navbar role={"admin"} />
-      <Box sx={{ width: "90%", height: "max-content", pt: 15, margin: "auto" }}>
-        <Typography
-          variant="h5"
-          sx={{ color: "primary.main", pb: 3, fontWeight: "bold" }}
-        >
-          List Category
-        </Typography>
+      <Box sx={{ width: "90%", height: "max-content", pt: 20, margin: "auto" }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography
+            variant="h5"
+            sx={{ color: "primary.main", pb: 3, fontWeight: "bold" }}
+          >
+            List Category
+          </Typography>
+          <TransitionModal />
+        </Stack>
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell sx={{ fontWeight: "bold" }}>
-                  No
-                </StyledTableCell>
+                <StyledTableCell sx={{ fontWeight: "bold" }}>No</StyledTableCell>
                 <StyledTableCell align="center" sx={{ fontWeight: "bold" }}>
                   Category Name
                 </StyledTableCell>
@@ -101,48 +107,47 @@ export default function Category() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.No}>
-                  <StyledTableCell component="th" scope="row">
-                    {row.No}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.Category_Name}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Button
-                      variant="contained"
-                      color="error"
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: "bold",
-                        width: 100,
-                      }}
-                      onClick={() => handleEdit(row.No)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => handleOpenDialog(row.No)} // Buka dialog saat klik Delete
-                      sx={{
-                        ml: 1,
-                        color: "primary.main",
-                        fontWeight: "bold",
-                        width: 100,
-                      }}
-                    >
-                      Delete
-                    </Button>
+              {categories
+                .slice() // Create a shallow copy of the array
+                .sort((a, b) => a.id - b.id) // Sort by ID
+                .map((category, index) => (
+                  <StyledTableRow key={category.id}>
+                    <StyledTableCell component="th" scope="row">
+                      {index + 1}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">{category.categoryName}</StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Button
+                        variant="contained"
+                        color="error"
+                        sx={{
+                          color: "primary.main",
+                          fontWeight: "bold",
+                          width: 100,
+                        }}
+                        onClick={() => handleEdit(category.id)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => handleOpenDialog(category.id)}
+                        sx={{
+                          ml: 1,
+                          color: "primary.main",
+                          fontWeight: "bold",
+                          width: 100,
+                        }}
+                      >
+                        Delete
+                      </Button>
                     </StyledTableCell>
                   </StyledTableRow>
-              ))}
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* DraggableDialog terhubung ke state dialogOpen */}
         <DraggableDialog
           open={dialogOpen}
           handleClose={handleCloseDialog}

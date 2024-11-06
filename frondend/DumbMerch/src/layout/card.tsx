@@ -6,30 +6,37 @@ import CardActionArea from '@mui/material/CardActionArea';
 import theme from '../theme/theme';
 import { Link } from 'react-router-dom';
 
-export default function ActionAreaCard() {
+interface ActionAreaCardProps {
+  productId: number
+  productName: string;
+  productDesc: string;
+  price: number;
+  image?: string; 
+  qty: number;
+}
+
+export default function ActionAreaCard({ productName, price, image, qty, productId }: ActionAreaCardProps) {
   return (
-    <Link to= "/detail">
-    <Card sx={{ maxWidth: 241,ml:'20px', Height:410,borderRadius:'10px' }}>
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          height="312"
-          image="assets/produk.png"
-          alt="green iguana"
-        />
-        <CardContent sx={{ bgcolor: '#212121'}}>
-          <Typography gutterBottom variant="h5" sx={{ color: theme.palette.secondary.main}}>
-            Mouse
-          </Typography>
-          <Typography variant="body2" sx={{ color: theme.palette.primary.main,mt:1 }}>
-            Rp.700.000
-          </Typography>
-          <Typography variant="body2" sx={{ color: theme.palette.primary.main,mt:1 }}>
-            Stock : 600
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-    </Link>
+      <Card sx={{ maxWidth: 355, ml: '20px',mb:2, height: 430, borderRadius: '10px' }}>
+        <CardActionArea component={Link} to={`/detail/${productId}`}>
+          <CardMedia
+            component="img"
+            height="312"
+            image={image || "assets/produk.png"} 
+            alt={productName}
+          />
+          <CardContent sx={{ bgcolor: '#212121',p:2 }}>
+            <Typography gutterBottom variant="h5" sx={{ color: theme.palette.secondary.main }}>
+              {productName}
+            </Typography>
+            <Typography variant="body2" sx={{ color: theme.palette.primary.main, mt: 1 }}>
+              Rp.{price.toLocaleString()} 
+            </Typography>
+            <Typography variant="body2" sx={{ color: theme.palette.primary.main, mt: 1 }}>
+              Stock: {qty}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
   );
 }

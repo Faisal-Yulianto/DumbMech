@@ -1,21 +1,23 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
-import Fade from "@mui/material/Fade";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import useAddProduct from "../hooks/useEditProfile";
-import { CircularProgress, Backdrop } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import {
+  Box,
+  Modal,
+  Fade,
+  Button,
+  Typography,
+  Backdrop,
   Stack,
-  styled,
   TextField,
+  CircularProgress,
+  styled,
+  MenuItem,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { useAddProduct } from "../hooks/useAddProduct";
 
 const style = {
   borderRadius: "20px",
-  position: "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -31,24 +33,30 @@ const VisuallyHiddenInput = styled("input")({
   display: "none",
 });
 
-export default function addProductModal() {
+const AddProductModal: React.FC = () => {
   const [open, setOpen] = React.useState(false);
+
   const {
-    register,
-    handleSubmit,
-    onSubmit,
-    errors,
     fileNames,
     errorMessage,
-    handleFileChange,
-    setErrorMessage,
     isLoading,
+    handleFileChange,
+    handleSubmit,
+    onSubmit,
+    fetchAndSetCategories,
+    register,
+    errors,
+    categories,
+    categoryLoading,
   } = useAddProduct();
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+    fetchAndSetCategories();
+  };
+
   const handleClose = () => {
     setOpen(false);
-    setErrorMessage("");
   };
 
   return (
@@ -58,8 +66,8 @@ export default function addProductModal() {
         sx={{
           bgcolor: "secondary.main",
           ml: 5,
-          width: "200px",
-          p: 2,
+          width: "160px",
+          p: 1.5,
           mt: "-20px",
         }}
       >
@@ -67,8 +75,6 @@ export default function addProductModal() {
         Add Product
       </Button>
       <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
@@ -82,7 +88,6 @@ export default function addProductModal() {
         <Fade in={open}>
           <Box sx={style}>
             <Typography
-              id="transition-modal-title"
               variant="h3"
               component="h2"
               sx={{ fontWeight: "bold", color: "primary.main" }}
@@ -90,134 +95,166 @@ export default function addProductModal() {
               Add Product
             </Typography>
             <Backdrop open={isLoading} style={{ zIndex: 1301 }}>
-              <CircularProgress color="secondary" size={60} />{" "}
+              <CircularProgress color="secondary" size={60} />
             </Backdrop>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              <Box
-                component="form"
-                onSubmit={handleSubmit(onSubmit)}
-                sx={{
-                  width: "90%",
-                  m: "auto",
-                  "& .MuiTextField-root": { width: "100%", mt: 3 },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                {errorMessage && (
-                  <Typography color="error">{errorMessage}</Typography>
-                )}
-                <Stack direction={"row"} alignItems={"center"}>
-                  <Button
-                    component="label"
-                    variant="contained"
-                    sx={{
-                      bgcolor: "secondary.main",
-                      color: "primary.main",
-                      p: 1,
-                      mr: 2,
-                      width: "130px",
-                    }}
-                  >
-                    Upload Image
-                    <VisuallyHiddenInput
-                      type="file"
-                      onChange={handleFileChange}
-                      multiple
-                    />
-                  </Button>
-                  {fileNames.length > 0 && (
-                    <Typography sx={{ mt: 1, color: "white" }}>
-                      {fileNames.join(", ")}
-                    </Typography>
-                  )}
-                </Stack>
-                <TextField
-                  label="Product Name"
-                  variant="outlined"
-                  {...register("ProductName")}
-                  InputProps={{
-                    style: { color: "black" },
-                  }}
-                  sx={{
-                    borderRadius: 1,
-                  }}
-                />
-                {errors.username && (
-                  <Typography color="error">
-                    {errors.username.message as string}
-                  </Typography>
-                )}
+            <Box
+              component="form"
+              onSubmit={handleSubmit(onSubmit)}
+              sx={{
+                width: "90%",
+                m: "auto",
+                "& .MuiTextField-root": { width: "100%", mt: 3 },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              {errorMessage && (
+                <Typography color="error">{errorMessage}</Typography>
+              )}
 
-                <TextField
-                  multiline
-                  rows={4}
-                  label="Description"
-                  variant="outlined"
-                  {...register("description")}
-                  InputProps={{
-                    style: { color: "black" },
-                  }}
-                  sx={{
-                    borderRadius: 1,
-                  }}
-                />
-                {errors.email && (
-                  <Typography color="error">
-                    {errors.email.message as string}
-                  </Typography>
-                )}
-
-                <TextField
-                  label="Price"
-                  variant="outlined"
-                  {...register("price")}
-                  InputProps={{
-                    style: { color: "black" },
-                  }}
-                  sx={{
-                    borderRadius: 1,
-                  }}
-                />
-                {errors.phone && (
-                  <Typography color="error">
-                    {errors.phone.message as string}
-                  </Typography>
-                )}
-
-                <TextField
-                  label="qty"
-                  variant="outlined"
-                  {...register("qty")}
-                  InputProps={{
-                    style: { color: "black" },
-                  }}
-                  sx={{
-                    borderRadius: 1,
-                  }}
-                />
-                {errors.phone && (
-                  <Typography color="error">
-                    {errors.phone.message as string}
-                  </Typography>
-                )}
-
+              <Stack direction={"row"} alignItems={"center"}>
                 <Button
-                  type="submit"
+                  component="label"
                   variant="contained"
                   sx={{
                     bgcolor: "secondary.main",
-                    color: "white",
-                    mt: 3,
+                    color: "primary.main",
+                    p: 1,
+                    mr: 2,
+                    width: "130px",
                   }}
                 >
-                  {isLoading ? "Loading..." : "Add"}
+                  Upload Image
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={handleFileChange}
+                    multiple
+                  />
                 </Button>
-              </Box>
-            </Typography>
+                {fileNames.length > 0 && (
+                  <Typography sx={{ mt: 1, color: "white" }}>
+                    {fileNames.join(", ")}
+                  </Typography>
+                )}
+              </Stack>
+
+              <TextField
+                label="Product Name"
+                variant="outlined"
+                {...register("productName")}
+                InputProps={{
+                  style: { color: "black" },
+                }}
+                sx={{
+                  borderRadius: 1,
+                }}
+              />
+              {errors.productName && (
+                <Typography color="error">
+                  {errors.productName.message as string}
+                </Typography>
+              )}
+
+              <TextField
+                multiline
+                rows={3}
+                label="Description"
+                variant="outlined"
+                {...register("productDesc")}
+                InputProps={{
+                  style: { color: "black" },
+                }}
+                sx={{
+                  borderRadius: 1,
+                }}
+              />
+              {errors.productDesc && (
+                <Typography color="error">
+                  {errors.productDesc.message as string}
+                </Typography>
+              )}
+
+              <TextField
+                label="Price"
+                variant="outlined"
+                {...register("price")}
+                InputProps={{
+                  style: { color: "black" },
+                }}
+                sx={{
+                  borderRadius: 1,
+                }}
+              />
+              {errors.price && (
+                <Typography color="error">
+                  {errors.price.message as string}
+                </Typography>
+              )}
+
+              <TextField
+                label="Quantity"
+                variant="outlined"
+                {...register("qty")}
+                InputProps={{
+                  style: { color: "black" },
+                }}
+                sx={{
+                  borderRadius: 1,
+                }}
+              />
+              {errors.qty && (
+                <Typography color="error">
+                  {errors.qty.message as string}
+                </Typography>
+              )}
+
+              <TextField
+                select
+                label="Category"
+                variant="outlined"
+                {...register("categoryId")}
+                InputProps={{
+                  style: { color: "black" },
+                }}
+                sx={{
+                  borderRadius: 1,
+                }}
+              >
+                {categoryLoading ? (
+                  <MenuItem disabled>Loading categories...</MenuItem>
+                ) : (
+                  categories.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.categoryName}
+                    </MenuItem>
+                  ))
+                )}
+              </TextField>
+              {errors.categoryId && (
+                <Typography color="error">
+                  {errors.categoryId.message as string}
+                </Typography>
+              )}
+
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  bgcolor: "secondary.main",
+                  color: "white",
+                  width: "10%",
+                  mt: 3,
+                  p: 1.5,
+                }}
+              >
+               {isLoading ? "Loading..." : "Add"}     
+              </Button>
+            </Box>
           </Box>
         </Fade>
       </Modal>
     </div>
   );
-}
+};
+
+export default AddProductModal;

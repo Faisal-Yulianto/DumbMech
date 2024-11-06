@@ -1,15 +1,24 @@
-import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
-import { Link, NavLink } from "react-router-dom";
+import { AppBar, Toolbar, Typography, Box, Button, IconButton } from "@mui/material";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-const navItemsUser = [
+// Mendefinisikan tipe untuk item navigasi
+interface NavItem {
+  name: string;
+  icon?: JSX.Element; // ikon bersifat opsional
+  path: string;
+}
+
+const navItemsUser: NavItem[] = [
+  { name: "Cart", icon: <ShoppingCartIcon />, path: "/cart" },
   { name: "Home", path: "/" },
   { name: "Complain", path: "/complain" },
   { name: "Profile", path: "/profile" },
   { name: "Logout", path: "/login" },
 ];
 
-const navItemsAdmin = [
-  { name: "dahsboard", path: "/dashboard" },
+const navItemsAdmin: NavItem[] = [
+  { name: "Dashboard", path: "/dashboard" },
   { name: "Complain", path: "/complain" },
   { name: "Category", path: "/category" },
   { name: "Product", path: "/product" },
@@ -18,6 +27,12 @@ const navItemsAdmin = [
 
 export default function Navbar({ role }: { role: "user" | "admin" }) {
   const navItems = role === "admin" ? navItemsAdmin : navItemsUser;
+  const navigate = useNavigate(); 
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); 
+    navigate("/login");
+  };
 
   return (
     <AppBar position="fixed" sx={{ bgcolor: "black", padding: '20px' }}>
@@ -32,25 +47,60 @@ export default function Navbar({ role }: { role: "user" | "admin" }) {
           </Link>
         </Typography>
         <Box>
-          {navItems.map((item) => (
-            <Button
-              key={item.name}
-              component={NavLink}
-              to={item.path}
-              sx={{
-                color: "white",
-                textDecoration: "none",
-                "&.active": {
-                  fontWeight: "bold",
-                  color: "secondary.main",
-                },
-                marginTop: "-30px",
-                marginRight: "16px",
-              }}
-            >
-              {item.name}
-            </Button>
-          ))}
+          {navItems.map((item) =>
+            item.icon ? ( 
+              <IconButton
+                key={item.name}
+                component={NavLink}
+                to={item.path}
+                sx={{
+                  color: "white",
+                  "&.active": {
+                    color: "secondary.main",
+                  },
+                  marginTop: "-30px",
+                  marginRight: "16px",
+                }}
+              >
+                {item.icon}
+              </IconButton>
+            ) : item.name === "Logout" ? ( 
+              <Button
+                key={item.name}
+                onClick={handleLogout} 
+                sx={{
+                  color: "white",
+                  textDecoration: "none",
+                  "&.active": {
+                    fontWeight: "bold",
+                    color: "secondary.main",
+                  },
+                  marginTop: "-30px",
+                  marginRight: "16px",
+                }}
+              >
+                {item.name}
+              </Button>
+            ) : (
+              <Button
+                key={item.name}
+                component={NavLink}
+                to={item.path}
+                sx={{
+                  color: "white",
+                  textDecoration: "none",
+                  "&.active": {
+                    fontWeight: "bold",
+                    color: "secondary.main",
+                  },
+                  marginTop: "-30px",
+                  marginRight: "16px",
+                }}
+              >
+                {item.name}
+              </Button>
+            )
+          )}
         </Box>
       </Toolbar>
     </AppBar>

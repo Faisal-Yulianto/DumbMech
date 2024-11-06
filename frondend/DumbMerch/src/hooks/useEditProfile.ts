@@ -71,7 +71,6 @@ const useEditProfile = () => {
         }
       );
       console.log("Update successful:", response.data);
-      
       dispatch(UpdateProfile(response.data)); 
       dispatch(fetchProfile()); 
       

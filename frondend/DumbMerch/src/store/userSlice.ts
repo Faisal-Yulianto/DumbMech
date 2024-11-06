@@ -10,6 +10,7 @@ interface User {
 }
 
 interface UserState {
+  [x: string]: any;
   user: User | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;

@@ -1,89 +1,29 @@
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AppDispatch, RootState } from "../store/store";
+import { createProduct } from "../store/productSlice";
+import { fetchCategories } from "../store/categorySlice";
+import {jwtDecode} from "jwt-decode";
 import addProductSchema from "../schemas/addProductScema";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux"; 
-import { AppDispatch } from "../store/store";
-import { UpdateProfile  , fetchProfile } from "../store/profileSlice"; 
-import { useState } from "react";
 
 type TokenPayload = {
-  email: string;
   userId: number;
 };
 
-const useAddProduct = () => {
+export const useAddProduct = () => {
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  
-  const dispatch = useDispatch<AppDispatch>(); 
+  const dispatch = useDispatch<AppDispatch>();
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(addProductSchema),
   });
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const token = localStorage.getItem("token");
-  let userId: number | null = null;
-  let email: string | null = null;
-
-
-  if (token) {
-    const decoded = jwtDecode<TokenPayload>(token);
-    console.log("Decoded Token:", decoded);
-  }
-
-  const emailFromRedux = email; 
-  const onSubmit = async (data: any) => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("username", data.username);
-    formData.append("email", emailFromRedux ?? ""); 
-    formData.append("phone", data.phone);
-    formData.append("gender", data.gender);
-    formData.append("address", data.address);
-
-    const files = (document.querySelector('input[type="file"]') as HTMLInputElement)?.files;
-    if (files) {
-      Array.from(files).forEach((file) => {
-        formData.append("image", file);
-      });
-    }
-
-    if (!userId) {
-      setErrorMessage("User ID tidak ditemukan dalam token.");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await axios.put(
-        `${baseUrl}/api/profile/${userId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("Update successful:", response.data);
-      
-      dispatch(UpdateProfile(response.data)); 
-      dispatch(fetchProfile()); 
-      
-      setFileNames([]);
-      reset();
-    } catch (error: any) {
-      const errorMsg = error.response?.data?.message || "Gagal memperbarui profil. Silakan coba lagi.";
-      setErrorMessage(errorMsg);
-      console.error("Error updating profile:", error);
-    }
-    finally {
-      setIsLoading(false); 
-    }
-  };
+  const categories = useSelector((state: RootState) => state.Category.categories);
+  const categoryLoading = useSelector((state: RootState) => state.Category.loading);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -94,18 +34,72 @@ const useAddProduct = () => {
     }
   };
 
+  const fetchAndSetCategories = () => {
+    dispatch(fetchCategories());
+  };
+
+  const onSubmit = async (data: any) => {
+    console.log("Form data:", data);
+    setIsLoading(true);
+
+    const token = localStorage.getItem("token");
+    let userId: number | null = null;
+
+    if (token) {
+      const decoded = jwtDecode<TokenPayload>(token);
+      userId = decoded.userId;
+    } else {
+      setErrorMessage("User is not authenticated.");
+      setIsLoading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("productName", data.productName);
+    formData.append("productDesc", data.productDesc);
+    formData.append("price", data.price);
+    formData.append("qty", data.qty);
+    formData.append("categoryId", data.categoryId);
+
+    if (userId !== null) {
+      formData.append("userId", userId.toString());
+    }
+
+    const files = (document.querySelector('input[type="file"]') as HTMLInputElement)?.files;
+    if (files) {
+      Array.from(files).forEach((file) => formData.append("image", file));
+    }
+
+    try {
+      await dispatch(createProduct(formData));
+      setFileNames([]);
+      reset();
+      window.location.reload();
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        setErrorMessage("User is not authenticated. Please log in again.");
+      } else {
+        const errorMsg =
+          error.response?.data?.message || "Failed to add product. Please try again.";
+        setErrorMessage(errorMsg);
+      }
+      console.error("Error adding product:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
-    register,
+    fileNames,
+    errorMessage,
+    isLoading,
+    handleFileChange,
     handleSubmit,
     onSubmit,
+    fetchAndSetCategories,
+    register,
     errors,
-    fileNames,
-    emailFromRedux,
-    errorMessage,
-    handleFileChange,
-    setErrorMessage,
-    isLoading,
+    categories,
+    categoryLoading,
   };
 };
-
-export default useAddProduct;
