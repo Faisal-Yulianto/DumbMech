@@ -5,6 +5,7 @@ import authRouter from './src/router/authRoutes';
 import profileRouter from './src/router/profileRoutes'
 import productRouter from './src/router/productRoutes'
 import categoryRouter from './src/router/categoryRoutes'
+import cartRouter from "./src/router/cartRoutes";
 import corsOptions from "./src/utils/cors";
 import cors from "cors"
 
@@ -23,6 +24,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/profile',profileRouter)
 app.use('/api',productRouter)
 app.use('/api',categoryRouter)
+app.use('/api',cartRouter)
 
 app.listen(port, () => {corsOptions
   console.log(`[server]: Server is running at http://localhost:${port}`);
