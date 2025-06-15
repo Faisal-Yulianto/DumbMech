@@ -1,7 +1,7 @@
 import { prisma } from "../utils/prisma";
 import bcrypt from "bcrypt";
 import { genereateToken } from "../utils/jwt";
-import { RegiterDto, loginDto } from "../dto/auth-dto"; 
+import { RegiterDto, loginDto } from "../dto/auth-dto";
 
 export const register = async (data: RegiterDto) => {
   const { email, password, username } = data;
@@ -11,15 +11,15 @@ export const register = async (data: RegiterDto) => {
     data: {
       email,
       username,
-      password: hashedPassword
-    }
+      password: hashedPassword,
+    },
   });
 
-  return genereateToken(user.id, user.role,user.email); 
+  return 
 };
 
 export const login = async (data: loginDto) => {
-  const { email, password } = data; 
+  const { email, password } = data;
   const user = await prisma.user.findUnique({
     where: { email },
   });
@@ -29,19 +29,17 @@ export const login = async (data: loginDto) => {
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) throw new Error("Invalid password");
 
-  return genereateToken(user.id, user.role,user.email);
+  return genereateToken(user.id, user.role, user.email);
 };
 
 export const getUserById = async (userId: number) => {
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-    });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
 
-    if (!user) {
-        throw new Error("User not found");
-    }
+  if (!user) {
+    throw new Error("User not found");
+  }
 
-    return user;
-}
-
-
+  return user;
+};

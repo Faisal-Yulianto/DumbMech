@@ -61,11 +61,14 @@ export const updateCartItem = async ({ userId, productId, quantity }: updateCart
     throw new Error('Product not found in cart');
   }
 
+  // ✅ Include relasi product
   return prisma.cartItem.update({
     where: { id: cartItem.id },
     data: { quantity },
+    include: { product: true }, // <-- penting
   });
 };
+
 
 // Fungsi untuk menghapus item dari keranjang
 export const removeFromCart = async (userId: number, productId: number) => {

@@ -44,5 +44,6 @@ export const handldeUpdateProduct = async (req:Request,res:Response) => {
     res.status(200).json({message: "succesfully delete product"})
   } catch (error) {
     res.status(400).json({ error: (error as Error).message || "deleted product failed" });
+    console.log(error)
   }
  }
