@@ -16,7 +16,8 @@ import {
   import Cart from "../pages/cart";
   import Checkout from "../pages/checkout";
   import Dashboard from "../pages/dashboard";
-  import ProtectedRoute from "./protectedRoutes"; // Impor ProtectedRoute
+  import Unauthorized from "./ErrorPage";
+  import ProtectedRoute from "./protectedRoutes"; 
   
   const routes: RouteObject[] = [
     {
@@ -30,23 +31,23 @@ import {
     {
       path: "/", 
       element: (
-        <ProtectedRoute>
-        <Home />
+        <ProtectedRoute requiredRole="USER">
+        <Home/>
         </ProtectedRoute>
       )
     },
     {
       path: "detail/:productId", 
       element: (
-        <ProtectedRoute>
-        <Detail />,
+        <ProtectedRoute requiredRole="USER">
+        <Detail />
         </ProtectedRoute>
       )
     },
     {
       path: "profile", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="USER">
           <Profile />
         </ProtectedRoute>
       ),
@@ -54,7 +55,7 @@ import {
     {
       path: "complain", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="USER">
           <Complain />
         </ProtectedRoute>
       ),
@@ -62,7 +63,7 @@ import {
     {
       path: "category", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="ADMIN">
           <Category />
         </ProtectedRoute>
       ),
@@ -70,7 +71,7 @@ import {
     {
       path: "product", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="ADMIN">
           <Product />
         </ProtectedRoute>
       ),
@@ -78,7 +79,7 @@ import {
     {
       path: "category/edit/:id", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="ADMIN">
           <EditCategory />
         </ProtectedRoute>
       ),
@@ -86,7 +87,7 @@ import {
     {
       path: "product/edit/:id", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="ADMIN">
           <EditProduct />
         </ProtectedRoute>
       ),
@@ -94,7 +95,7 @@ import {
     {
       path: "cart", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="USER">
           <Cart />
         </ProtectedRoute>
       ),
@@ -102,7 +103,7 @@ import {
     {
       path: "checkout", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="USER">
           <Checkout />
         </ProtectedRoute>
       ),
@@ -110,8 +111,16 @@ import {
     {
       path: "dashboard", 
       element: (
-        <ProtectedRoute>
+        <ProtectedRoute requiredRole="ADMIN">
           <Dashboard />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "unauthorized", 
+      element: (
+        <ProtectedRoute >
+          <Unauthorized/>
         </ProtectedRoute>
       ),
     }

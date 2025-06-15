@@ -30,3 +30,5 @@ const addProductSchema = z.object({
 });
 
 export default addProductSchema;
+
+export type addProductSchemaType = z.infer<typeof addProductSchema>

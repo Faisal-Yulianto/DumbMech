@@ -2,26 +2,27 @@ import { Box, Typography, Stack, TextField, Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"; 
-import registerSchema from "../../schemas/registerSchema";
+import registerSchema, { registerSchemaType } from "../../schemas/registerSchema";
 import { useState } from "react";
 import axios from "axios";
+
 
 export default function Register() {
   const navigate = useNavigate(); 
   const [errorMessage, setErrorMessage] = useState('');
   
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<registerSchemaType>({
     resolver: zodResolver(registerSchema),
   });
   
   const baseUrl = import.meta.env.VITE_API_BASE_URL
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: registerSchemaType) => {
     try {
       const response = await axios.post(`${baseUrl}/api/auth/register`, data); 
       console.log('Registration successful:', response.data);
       navigate('/login'); 
-    } catch (error: any) {
+    } catch (error) {
       setErrorMessage('Registration failed. Please try again.'); 
       console.error(error);
     }
@@ -83,7 +84,7 @@ export default function Register() {
                 },
               }}
               error={!!errors.username} 
-              helperText={errors.name?.message as string} 
+              helperText={errors.username?.message as string} 
             />
             <TextField
               fullWidth

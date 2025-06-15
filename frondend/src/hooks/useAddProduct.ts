@@ -6,7 +6,8 @@ import { AppDispatch, RootState } from "../store/store";
 import { createProduct } from "../store/productSlice";
 import { fetchCategories } from "../store/categorySlice";
 import {jwtDecode} from "jwt-decode";
-import addProductSchema from "../schemas/addProductScema";
+import addProductSchema, { addProductSchemaType } from "../schemas/addProductScema";
+import { AxiosError } from "axios";
 
 type TokenPayload = {
   userId: number;
@@ -18,31 +19,31 @@ export const useAddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<addProductSchemaType>({
     resolver: zodResolver(addProductSchema),
   });
 
   const categories = useSelector((state: RootState) => state.Category.categories);
   const categoryLoading = useSelector((state: RootState) => state.Category.loading);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const fileList = Array.from(files).map((file) => file.name);
-      setFileNames(fileList);
-      console.log("Files uploaded:", fileList);
-    }
-  };
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files) {
+        const fileList = Array.from(files).map((file) => file.name);
+        setFileNames(fileList);
+        console.log("Files uploaded:", fileList);
+      }
+    };
 
-  const fetchAndSetCategories = () => {
-    dispatch(fetchCategories());
-  };
+    const fetchAndSetCategories = () => {
+      dispatch(fetchCategories());
+    };
 
-  const onSubmit = async (data: any) => {
-    console.log("Form data:", data);
-    setIsLoading(true);
+    const onSubmit = async (data: addProductSchemaType) => {
+      console.log("Form data:", data);
+      setIsLoading(true);
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
     let userId: number | null = null;
 
     if (token) {
@@ -57,9 +58,9 @@ export const useAddProduct = () => {
     const formData = new FormData();
     formData.append("productName", data.productName);
     formData.append("productDesc", data.productDesc);
-    formData.append("price", data.price);
-    formData.append("qty", data.qty);
-    formData.append("categoryId", data.categoryId);
+    formData.append("price", data.price.toString());
+    formData.append("qty", data.qty.toString());
+    formData.append("categoryId", data.categoryId.toString());
 
     if (userId !== null) {
       formData.append("userId", userId.toString());
@@ -75,7 +76,8 @@ export const useAddProduct = () => {
       setFileNames([]);
       reset();
       window.location.reload();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message:string}>;
       if (error.response?.status === 401) {
         setErrorMessage("User is not authenticated. Please log in again.");
       } else {
@@ -83,7 +85,6 @@ export const useAddProduct = () => {
           error.response?.data?.message || "Failed to add product. Please try again.";
         setErrorMessage(errorMsg);
       }
-      console.error("Error adding product:", error);
     } finally {
       setIsLoading(false);
     }

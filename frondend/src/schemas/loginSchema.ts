@@ -6,3 +6,4 @@ const loginSchema = z.object({
 });
 
 export default loginSchema;
+export type loginSchemaType = z.infer<typeof loginSchema>

@@ -7,6 +7,15 @@ import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import { addToCart } from "../store/cartSlice";
 import { useNavigate } from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
+
+interface JwtPayload {
+  userId: number;
+  role: string;
+  email: string;
+  iat: number;
+  exp: number;
+}
 
 export default function Detail() {
   const { productId } = useParams<{ productId: string }>();
@@ -17,24 +26,30 @@ export default function Detail() {
   const product = useSelector((state: RootState) =>
     state.product.products.find((p) => p.id === Number(productId))
   );
+
+  // Ambil token dari localStorage
+  const token = localStorage.getItem("token");
   
-  // Menyimpan cart items dari localStorage
-  const cartItems = JSON.parse(localStorage.getItem("cart") || "[]");
+  // Decode token dan ambil userId
+  let userId: number | null = null;
+  if (token) {
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      userId = decoded.userId;
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
+  }
 
   // Fungsi untuk menambahkan produk ke keranjang
   const handleAddToCart = () => {
-    if (product && product.id !== undefined) {
-      console.log("Adding to cart:", { userId: 1, productId: product.id, quantity: 1 });
-
-      // Dispatch untuk menambahkan produk ke cart
-      dispatch(addToCart({ userId: 1, productId: product.id, quantity: 1 }));
-
-      // Memperbarui cart di localStorage
-      const updatedCart = [...cartItems, { product, quantity: 1 }];
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-      // Navigasi ke halaman cart
+    if (product && product.id !== undefined && userId !== null) {
+      console.log("Adding to cart:", { userId, productId: product.id, quantity: 1 });
+      dispatch(addToCart({ userId, productId: product.id, quantity: 1 }));
       navigate("/cart");
+    } else {
+      console.error("User not authenticated or product missing");
+      // Bisa tambahkan redirect ke login atau alert di sini
     }
   };
 

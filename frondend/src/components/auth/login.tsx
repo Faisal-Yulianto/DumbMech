@@ -1,28 +1,37 @@
 import { Box, Typography, Stack, TextField, Button } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import {  Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import loginSchema from "../../schemas/loginSchema"; 
+import loginSchema, { loginSchemaType } from "../../schemas/loginSchema"; 
 import { useState } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema),
   });
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: loginSchemaType) => {
     try {
       const response = await axios.post(`${baseUrl}/api/auth/login`, data);
       localStorage.setItem("token", response.data.token); 
-      navigate("/"); 
+      const payload = JSON.parse(atob(response.data.token.split('.')[1]));
+      const role = payload.role;
+      if (role === "USER"){
+      navigate("/");}
+      else if (role ==="ADMIN") {
+        navigate("/dashboard")
+      }
+      else {
+        navigate("/unauthorized")
+      }
       window.location.reload();
-    } catch (error: any) {
+    } catch (error) {
       setErrorMessage("Login failed. Please check your credentials.");
       console.error(error);
     }

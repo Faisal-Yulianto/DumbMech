@@ -7,3 +7,4 @@ const registerSchema = z.object({
 });
 
 export default registerSchema;
+export type registerSchemaType = z.infer<typeof registerSchema>;
